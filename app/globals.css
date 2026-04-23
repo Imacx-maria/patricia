@@ -1,38 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f4ef;
-  --foreground: #1f2933;
-  --surface: #fffdf8;
-  --muted: #eee8de;
-  --border: #ded6c9;
-  --accent: #0f766e;
+  --background: #f6f1e6;
+  --surface: #ffffff;
+  --surface-raised: #fffdf8;
+  --sidebar: #141417;
+  --sidebar-ink: #f4efe4;
+  --ink: #141417;
+  --ink-muted: #5b5b63;
+  --border: #e7e0d0;
+  --accent: #141417;
+  --accent-contrast: #ffffff;
+  --pastel-pink: #f9c6d1;
+  --pastel-yellow: #f7e26c;
+  --pastel-lavender: #d6c7f2;
+  --pastel-blue: #c9dafb;
+  --pastel-sage: #c8d89b;
+  --dot-accent: #f5d547;
+  --shadow-soft: 0 20px 40px -24px rgba(20, 20, 23, 0.18);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-ink: var(--sidebar-ink);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-yellow: var(--pastel-yellow);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-blue: var(--pastel-blue);
+  --color-pastel-sage: var(--pastel-sage);
+  --color-dot-accent: var(--dot-accent);
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--ink);
+  font-family: var(--font-sans);
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.55; }
 
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
+.shadow-soft { box-shadow: var(--shadow-soft); }
