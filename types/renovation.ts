@@ -48,3 +48,18 @@ export type DerivedTaskState = {
   isOwnerOnly: boolean;
   blockedReasons: BlockedReason[];
 };
+
+export type AttachmentKind = "option" | "progress" | "inspiration";
+
+export type Attachment = {
+  _id: string;
+  taskId: string;
+  storageId: string;
+  kind: AttachmentKind;
+  caption?: string;
+  price?: number | null;
+  sourceUrl?: string;
+  mimeType?: string;
+  createdAt: number;
+  url: string | null;
+};
