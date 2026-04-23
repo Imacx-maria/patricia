@@ -26,17 +26,15 @@ export function KanbanColumn({
   return (
     <section
       ref={setNodeRef}
-      className={`min-h-[72vh] w-[19rem] shrink-0 rounded-lg border p-3 transition ${
-        isOver ? "border-teal-500 bg-teal-50" : "border-[#ded6c9] bg-[#eee8de]/60"
-      }`}
+      className="flex w-72 shrink-0 flex-col gap-3 rounded-3xl bg-surface p-4 shadow-soft"
     >
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-900">{label}</h2>
-        <span className="rounded bg-white px-2 py-1 text-xs font-semibold text-slate-600">
-          {tasks.length}
+      <header className="flex items-center justify-between">
+        <span className="inline-flex h-7 items-center rounded-full bg-ink px-3 text-xs font-semibold text-white">
+          {label}
         </span>
-      </div>
-      <div className="grid gap-3">
+        <span className="text-xs text-ink-muted">{tasks.length}</span>
+      </header>
+      <div className="flex flex-col gap-3">
         {children ??
           tasks.map((task) => (
             <TaskCard
