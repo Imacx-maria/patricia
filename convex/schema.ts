@@ -32,6 +32,12 @@ export const costCategoryValidator = v.union(
   v.literal("other"),
 );
 
+export const attachmentKindValidator = v.union(
+  v.literal("option"),
+  v.literal("progress"),
+  v.literal("inspiration"),
+);
+
 export default defineSchema({
   people: defineTable({
     name: v.string(),
@@ -72,6 +78,17 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_area", ["areaId"])
     .index("by_owner", ["ownerId"]),
+
+  attachments: defineTable({
+    taskId: v.id("tasks"),
+    storageId: v.id("_storage"),
+    kind: attachmentKindValidator,
+    caption: v.optional(v.string()),
+    price: v.optional(v.union(v.number(), v.null())),
+    sourceUrl: v.optional(v.string()),
+    mimeType: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_task", ["taskId"]),
 
   activityLog: defineTable({
     taskId: v.id("tasks"),
