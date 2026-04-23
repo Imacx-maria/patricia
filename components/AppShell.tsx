@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import {
   BarChart3,
+  CalendarDays,
   ClipboardList,
   Columns3,
   Home,
@@ -23,6 +24,7 @@ const navItems: Array<{
   { href: "/dashboard", label: "Resumo", icon: Home },
   { href: "/mobile", label: "Checklist", icon: ClipboardList },
   { href: "/kanban", label: "Kanban", icon: Columns3 },
+  { href: "/calendar", label: "Calendário", icon: CalendarDays },
   { href: "/plan", label: "Plano", icon: Zap, mobile: false },
   { href: "/costs", label: "Custos", icon: BarChart3 },
   { href: "/settings", label: "Definições", icon: Settings, mobile: false },
