@@ -52,7 +52,7 @@ export default function CostsPage() {
   }, [areas, people, tasks]);
 
   if (!tasks || !people || !areas) {
-    return <div className="rounded-lg bg-[#fffdf8] p-6">A carregar custos...</div>;
+    return <div className="rounded-lg bg-surface p-6">A carregar custos...</div>;
   }
 
   const estimated = total(hydrated.map((task) => task.estimatedCost));
@@ -78,9 +78,9 @@ export default function CostsPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700">Custos</p>
-        <h1 className="text-2xl font-semibold text-slate-950">Resumo financeiro</h1>
+      <div className="flex flex-col gap-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Custos</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">Resumo financeiro</h1>
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">

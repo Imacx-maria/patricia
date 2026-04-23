@@ -20,16 +20,14 @@ export default function KanbanPage() {
   }, [areas, people, tasks]);
 
   if (!tasks || !people || !areas) {
-    return <div className="rounded-lg bg-[#fffdf8] p-6">A carregar kanban...</div>;
+    return <div className="rounded-lg bg-surface p-6">A carregar kanban...</div>;
   }
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700">
-          Planeamento desktop
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-950">Kanban da renovação</h1>
+      <div className="flex flex-col gap-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Planeamento desktop</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">Kanban da renovação</h1>
       </div>
       <KanbanBoard tasks={hydrated} people={people} onOpenTask={setSelectedTask} />
       {selectedTask ? (

@@ -54,17 +54,15 @@ export default function MobilePage() {
   }, [filters, hydrated, me, people]);
 
   if (!tasks || !people || !areas) {
-    return <div className="rounded-lg bg-[#fffdf8] p-6">A carregar renovação...</div>;
+    return <div className="rounded-lg bg-surface p-6">A carregar renovação...</div>;
   }
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700">
-            Checklist mobile
-          </p>
-          <h1 className="text-2xl font-semibold text-slate-950">Tarefas por área</h1>
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Checklist mobile</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">Tarefas por área</h1>
         </div>
         <div className="grid gap-2 md:w-72">
           <label className="text-sm font-medium">Ver como</label>
