@@ -30,15 +30,15 @@ export const COST_CATEGORY_LABELS: Record<CostCategory, string> = {
 };
 
 export const AREA_NAMES = [
-  "Geral",
-  "Hall",
-  "Cozinha",
-  "Sala",
-  "WC Social",
-  "WC Suite",
-  "Quarto",
-  "Corredor / Despensa",
-  "Exterior",
+  "Fase 1 - Preparação",
+  "Fase 2 - Obra suja",
+  "Fase 3 - Infraestruturas",
+  "Fase 4 - Fechos e carpintaria base",
+  "Fase 5 - Pintura",
+  "Fase 6 - Chão",
+  "Fase 7 - Montagens finais",
+  "Fase 8 - Mobiliário e restauro",
+  "Fase 9 - Exterior e extras",
 ] as const;
 
 export const currencyFormatter = new Intl.NumberFormat("pt-PT", {
