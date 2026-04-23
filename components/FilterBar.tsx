@@ -22,9 +22,9 @@ export function FilterBar({
   people: Person[];
 }) {
   return (
-    <div className="grid gap-2 rounded-lg border border-[#ded6c9] bg-[#fffdf8] p-3 md:grid-cols-5">
+    <div className="grid gap-2 rounded-xl border border-border bg-surface p-3 md:grid-cols-5">
       <select
-        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.area}
         onChange={(event) => onChange({ ...filters, area: event.target.value })}
       >
@@ -34,7 +34,7 @@ export function FilterBar({
         ))}
       </select>
       <select
-        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.personId}
         onChange={(event) => onChange({ ...filters, personId: event.target.value })}
       >
@@ -44,7 +44,7 @@ export function FilterBar({
         ))}
       </select>
       <select
-        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.status}
         onChange={(event) => onChange({ ...filters, status: event.target.value as TaskFilters["status"] })}
       >
@@ -53,7 +53,7 @@ export function FilterBar({
           <option key={status.value} value={status.value}>{status.label}</option>
         ))}
       </select>
-      <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+      <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
         <input
           type="checkbox"
           checked={filters.mine}
@@ -62,7 +62,7 @@ export function FilterBar({
         Só minhas
       </label>
       <div className="grid grid-cols-2 gap-2">
-        <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+        <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
           <input
             type="checkbox"
             checked={filters.blocked}
@@ -70,7 +70,7 @@ export function FilterBar({
           />
           Bloq.
         </label>
-        <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+        <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
           <input
             type="checkbox"
             checked={filters.waitingMaterial}

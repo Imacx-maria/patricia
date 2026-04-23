@@ -20,7 +20,8 @@ export function QuickAddTask({
   const [title, setTitle] = useState("");
   const [areaId, setAreaId] = useState<string>(areas[0]?._id ?? "");
   const activePeople = people.filter((person) => person.active);
-  const defaultPersonId = currentPersonId || activePeople[0]?._id || "";
+  const unassignedPersonId = people.find((person) => person.name === "Por atribuir")?._id;
+  const defaultPersonId = unassignedPersonId || currentPersonId || activePeople[0]?._id || "";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,7 +34,7 @@ export function QuickAddTask({
       status: "todo",
       priority: "medium",
       ownerId: defaultPersonId as Id<"people">,
-      allowedPersonIds: [defaultPersonId as Id<"people">],
+      allowedPersonIds: [],
       requiresOwnerDecision: false,
       ownerDecisionDone: false,
       dependencyIds: [],
@@ -48,17 +49,17 @@ export function QuickAddTask({
 
   return (
     <form
-      className="grid gap-2 rounded-lg border border-[#ded6c9] bg-[#fffdf8] p-3 md:grid-cols-[1fr_220px_auto]"
+      className="flex items-center gap-2"
       onSubmit={handleSubmit}
     >
       <input
-        className="h-12 rounded-md border border-[#ded6c9] bg-white px-3 text-base"
+        className="h-11 flex-1 rounded-full border border-border bg-surface px-4 text-sm"
         placeholder="Adicionar tarefa rápida..."
         value={title}
         onChange={(event) => setTitle(event.target.value)}
       />
       <select
-        className="h-12 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        className="h-11 rounded-full border border-border bg-surface px-3 text-sm"
         value={areaId}
         onChange={(event) => setAreaId(event.target.value)}
       >
@@ -67,11 +68,10 @@ export function QuickAddTask({
         ))}
       </select>
       <button
-        className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 font-semibold text-white hover:bg-teal-800"
+        className="h-11 rounded-full bg-ink px-5 font-semibold text-white hover:opacity-90"
         type="submit"
       >
         <Plus size={18} />
-        Adicionar
       </button>
     </form>
   );

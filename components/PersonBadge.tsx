@@ -8,14 +8,11 @@ export function PersonBadge({ person }: { person?: Person }) {
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200">
-      <span
-        className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-bold text-white"
-        style={{ backgroundColor: person.color }}
-      >
-        {person.initials}
-      </span>
-      {person.name}
+    <span
+      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold text-ink ring-2 ring-white"
+      style={{ backgroundColor: person.color }}
+    >
+      {person.initials}
     </span>
   );
 }
