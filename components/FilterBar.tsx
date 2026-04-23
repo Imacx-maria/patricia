@@ -1,0 +1,84 @@
+"use client";
+
+import { AREA_NAMES, STATUS_COLUMNS } from "@/lib/constants";
+import type { Person, TaskStatus } from "@/types/renovation";
+
+export type TaskFilters = {
+  area: string;
+  personId: string;
+  status: TaskStatus | "all";
+  mine: boolean;
+  blocked: boolean;
+  waitingMaterial: boolean;
+};
+
+export function FilterBar({
+  filters,
+  onChange,
+  people,
+}: {
+  filters: TaskFilters;
+  onChange: (filters: TaskFilters) => void;
+  people: Person[];
+}) {
+  return (
+    <div className="grid gap-2 rounded-lg border border-[#ded6c9] bg-[#fffdf8] p-3 md:grid-cols-5">
+      <select
+        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        value={filters.area}
+        onChange={(event) => onChange({ ...filters, area: event.target.value })}
+      >
+        <option value="all">Todas as áreas</option>
+        {AREA_NAMES.map((area) => (
+          <option key={area} value={area}>{area}</option>
+        ))}
+      </select>
+      <select
+        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        value={filters.personId}
+        onChange={(event) => onChange({ ...filters, personId: event.target.value })}
+      >
+        <option value="all">Todas as pessoas</option>
+        {people.map((person) => (
+          <option key={person._id} value={person._id}>{person.name}</option>
+        ))}
+      </select>
+      <select
+        className="h-11 rounded-md border border-[#ded6c9] bg-white px-3 text-sm"
+        value={filters.status}
+        onChange={(event) => onChange({ ...filters, status: event.target.value as TaskFilters["status"] })}
+      >
+        <option value="all">Todos os estados</option>
+        {STATUS_COLUMNS.map((status) => (
+          <option key={status.value} value={status.value}>{status.label}</option>
+        ))}
+      </select>
+      <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+        <input
+          type="checkbox"
+          checked={filters.mine}
+          onChange={(event) => onChange({ ...filters, mine: event.target.checked })}
+        />
+        Só minhas
+      </label>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+          <input
+            type="checkbox"
+            checked={filters.blocked}
+            onChange={(event) => onChange({ ...filters, blocked: event.target.checked })}
+          />
+          Bloq.
+        </label>
+        <label className="flex h-11 items-center gap-2 rounded-md border border-[#ded6c9] bg-white px-3 text-sm">
+          <input
+            type="checkbox"
+            checked={filters.waitingMaterial}
+            onChange={(event) => onChange({ ...filters, waitingMaterial: event.target.checked })}
+          />
+          Material
+        </label>
+      </div>
+    </div>
+  );
+}
