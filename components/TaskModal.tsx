@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { useMemo, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { AttachmentsSection } from "./AttachmentsSection";
 import { COST_CATEGORY_LABELS, PRIORITY_LABELS, STATUS_COLUMNS } from "@/lib/constants";
 import type {
   Area,
@@ -59,7 +60,8 @@ export function TaskModal({
   const createTask = useMutation(api.tasks.createTask);
   const deleteTask = useMutation(api.tasks.deleteTask);
   const [error, setError] = useState("");
-  const defaultPerson = people.find((person) => person.active) ?? people[0];
+  const unassignedPerson = people.find((person) => person.name === "Por atribuir");
+  const defaultPerson = unassignedPerson ?? people.find((person) => person.active) ?? people[0];
 
   const initialState = useMemo<FormState>(
     () => ({
@@ -69,7 +71,7 @@ export function TaskModal({
       status: task?.status ?? "todo",
       priority: task?.priority ?? "medium",
       ownerId: task?.ownerId ?? defaultPerson?._id ?? "",
-      allowedPersonIds: task?.allowedPersonIds ?? (defaultPerson ? [defaultPerson._id] : []),
+      allowedPersonIds: task?.allowedPersonIds ?? [],
       requiresOwnerDecision: task?.requiresOwnerDecision ?? false,
       ownerDecisionDone: task?.ownerDecisionDone ?? false,
       dependencyIds: task?.dependencyIds ?? [],
@@ -264,6 +266,14 @@ export function TaskModal({
             Notas
             <textarea className="min-h-24 rounded-xl border border-border bg-surface p-3" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
           </label>
+
+          {task ? (
+            <AttachmentsSection taskId={task._id} />
+          ) : (
+            <p className="rounded-xl bg-surface-raised p-3 text-xs text-ink-muted">
+              Guarda a tarefa para poderes adicionar fotos.
+            </p>
+          )}
 
           <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
             {task ? (
