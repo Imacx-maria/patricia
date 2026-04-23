@@ -141,42 +141,42 @@ export function TaskModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-slate-950/40 p-0 md:items-center md:justify-center md:p-6">
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-xl bg-[#fffdf8] shadow-2xl md:max-w-3xl md:rounded-xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#ded6c9] bg-[#fffdf8] px-4 py-3">
+      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-surface shadow-soft md:max-w-3xl md:rounded-3xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-4 py-3">
           <h2 className="text-lg font-semibold">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
-          <button className="rounded-md p-2 hover:bg-[#eee8de]" onClick={onClose}>
+          <button className="rounded-xl p-2 hover:bg-[#eee8de]" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
         <form className="grid gap-4 p-4" onSubmit={handleSubmit}>
-          {error ? <div className="rounded-md bg-red-100 p-3 text-sm text-red-800">{error}</div> : null}
+          {error ? <div className="rounded-xl bg-red-100 p-3 text-sm text-red-800">{error}</div> : null}
 
           <label className="grid gap-1 text-sm font-medium">
             Título
-            <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+            <input className="h-11 rounded-xl border border-border bg-surface px-3" value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
           </label>
 
           <label className="grid gap-1 text-sm font-medium">
             Descrição
-            <textarea className="min-h-24 rounded-md border border-[#ded6c9] bg-white p-3" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+            <textarea className="min-h-24 rounded-xl border border-border bg-surface p-3" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
           </label>
 
           <div className="grid gap-3 md:grid-cols-3">
             <label className="grid gap-1 text-sm font-medium">
               Área
-              <select className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.areaId} onChange={(event) => setForm({ ...form, areaId: event.target.value })}>
+              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.areaId} onChange={(event) => setForm({ ...form, areaId: event.target.value })}>
                 {areas.map((area) => <option key={area._id} value={area._id}>{area.name}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Estado
-              <select className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as TaskStatus })}>
+              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as TaskStatus })}>
                 {STATUS_COLUMNS.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Prioridade
-              <select className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value as TaskPriority })}>
+              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value as TaskPriority })}>
                 {Object.entries(PRIORITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </label>
@@ -185,39 +185,39 @@ export function TaskModal({
           <div className="grid gap-3 md:grid-cols-3">
             <label className="grid gap-1 text-sm font-medium">
               Responsável
-              <select className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.ownerId} onChange={(event) => setForm({ ...form, ownerId: event.target.value })}>
+              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.ownerId} onChange={(event) => setForm({ ...form, ownerId: event.target.value })}>
                 {people.map((person) => <option key={person._id} value={person._id}>{person.name}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Estimado
-              <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" inputMode="decimal" value={form.estimatedCost} onChange={(event) => setForm({ ...form, estimatedCost: event.target.value })} />
+              <input className="h-11 rounded-xl border border-border bg-surface px-3" inputMode="decimal" value={form.estimatedCost} onChange={(event) => setForm({ ...form, estimatedCost: event.target.value })} />
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Real
-              <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" inputMode="decimal" value={form.actualCost} onChange={(event) => setForm({ ...form, actualCost: event.target.value })} />
+              <input className="h-11 rounded-xl border border-border bg-surface px-3" inputMode="decimal" value={form.actualCost} onChange={(event) => setForm({ ...form, actualCost: event.target.value })} />
             </label>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
             <label className="grid gap-1 text-sm font-medium">
               Categoria
-              <select className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.costCategory} onChange={(event) => setForm({ ...form, costCategory: event.target.value as CostCategory })}>
+              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.costCategory} onChange={(event) => setForm({ ...form, costCategory: event.target.value as CostCategory })}>
                 {Object.entries(COST_CATEGORY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Início
-              <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} />
+              <input className="h-11 rounded-xl border border-border bg-surface px-3" type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} />
             </label>
             <label className="grid gap-1 text-sm font-medium">
               Prazo
-              <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" type="date" value={form.dueDate} onChange={(event) => setForm({ ...form, dueDate: event.target.value })} />
+              <input className="h-11 rounded-xl border border-border bg-surface px-3" type="date" value={form.dueDate} onChange={(event) => setForm({ ...form, dueDate: event.target.value })} />
             </label>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            <fieldset className="rounded-md border border-[#ded6c9] bg-white p-3">
+            <fieldset className="rounded-xl border border-border bg-surface p-3">
               <legend className="px-1 text-sm font-semibold">Quem pode executar</legend>
               <div className="mt-2 grid gap-2">
                 {people.map((person) => (
@@ -228,7 +228,7 @@ export function TaskModal({
                 ))}
               </div>
             </fieldset>
-            <fieldset className="rounded-md border border-[#ded6c9] bg-white p-3">
+            <fieldset className="rounded-xl border border-border bg-surface p-3">
               <legend className="px-1 text-sm font-semibold">Dependências</legend>
               <div className="mt-2 max-h-48 overflow-y-auto">
                 {tasks.filter((candidate) => candidate._id !== task?._id).map((candidate) => (
@@ -242,15 +242,15 @@ export function TaskModal({
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="flex items-center gap-2 rounded-md border border-[#ded6c9] bg-white p-3 text-sm font-medium">
+            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
               <input type="checkbox" checked={form.requiresOwnerDecision} onChange={(event) => setForm({ ...form, requiresOwnerDecision: event.target.checked })} />
               Precisa decisão da dona
             </label>
-            <label className="flex items-center gap-2 rounded-md border border-[#ded6c9] bg-white p-3 text-sm font-medium">
+            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
               <input type="checkbox" checked={form.ownerDecisionDone} onChange={(event) => setForm({ ...form, ownerDecisionDone: event.target.checked })} />
               Decisão tomada
             </label>
-            <label className="flex items-center gap-2 rounded-md border border-[#ded6c9] bg-white p-3 text-sm font-medium">
+            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
               <input type="checkbox" checked={form.materialNeeded} onChange={(event) => setForm({ ...form, materialNeeded: event.target.checked })} />
               Precisa material
             </label>
@@ -258,18 +258,18 @@ export function TaskModal({
 
           <label className="grid gap-1 text-sm font-medium">
             Notas de material
-            <input className="h-11 rounded-md border border-[#ded6c9] bg-white px-3" value={form.materialNotes} onChange={(event) => setForm({ ...form, materialNotes: event.target.value })} />
+            <input className="h-11 rounded-xl border border-border bg-surface px-3" value={form.materialNotes} onChange={(event) => setForm({ ...form, materialNotes: event.target.value })} />
           </label>
           <label className="grid gap-1 text-sm font-medium">
             Notas
-            <textarea className="min-h-24 rounded-md border border-[#ded6c9] bg-white p-3" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
+            <textarea className="min-h-24 rounded-xl border border-border bg-surface p-3" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
           </label>
 
-          <div className="flex items-center justify-between gap-3 border-t border-[#ded6c9] pt-4">
+          <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
             {task ? (
               <button
                 type="button"
-                className="inline-flex h-11 items-center gap-2 rounded-md border border-red-200 px-3 text-sm font-semibold text-red-700 hover:bg-red-50"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-pastel-pink px-4 text-sm font-semibold text-ink hover:bg-pastel-pink/40"
                 onClick={async () => {
                   try {
                     await deleteTask({ id: task._id });
@@ -284,8 +284,8 @@ export function TaskModal({
               </button>
             ) : <span />}
             <div className="flex gap-2">
-              <button type="button" className="h-11 rounded-md border border-[#ded6c9] px-4 font-semibold" onClick={onClose}>Cancelar</button>
-              <button type="submit" className="h-11 rounded-md bg-teal-700 px-4 font-semibold text-white hover:bg-teal-800">Guardar</button>
+              <button type="button" className="h-11 rounded-full border border-border px-4 font-semibold" onClick={onClose}>Cancelar</button>
+              <button type="submit" className="h-11 rounded-full bg-ink px-5 font-semibold text-white hover:opacity-90">Guardar</button>
             </div>
           </div>
         </form>
