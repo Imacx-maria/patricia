@@ -7,6 +7,7 @@ import {
   BarChart3,
   ClipboardList,
   Columns3,
+  Home,
   Settings,
   Users,
   Zap,
@@ -19,6 +20,7 @@ const navItems: Array<{
   icon: typeof ClipboardList;
   mobile?: boolean;
 }> = [
+  { href: "/dashboard", label: "Resumo", icon: Home },
   { href: "/mobile", label: "Checklist", icon: ClipboardList },
   { href: "/kanban", label: "Kanban", icon: Columns3 },
   { href: "/plan", label: "Plano", icon: Zap, mobile: false },
