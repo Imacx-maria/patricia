@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarDays, Check, Euro, RotateCcw } from "lucide-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { currencyFormatter, dateFormatter } from "@/lib/constants";
 import { deriveTaskState } from "@/lib/taskLogic";
@@ -25,6 +25,7 @@ export function TaskCard({
   compact?: boolean;
 }) {
   const toggleDone = useMutation(api.tasks.toggleDone);
+  const attachments = useQuery(api.attachments.listByTask, { taskId: task._id });
   const derived = deriveTaskState(task, allTasks, people);
 
   return (
@@ -77,6 +78,28 @@ export function TaskCard({
       ) : null}
 
       {!compact && derived.isBlocked ? <BlockedReasons reasons={derived.blockedReasons} tasks={allTasks} /> : null}
+
+      {attachments && attachments.length > 0 ? (
+        <div className="mt-3 flex gap-1.5">
+          {attachments.slice(0, 3).map((a) =>
+            a.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={a._id}
+                src={a.url}
+                alt=""
+                className="h-12 w-12 rounded-lg object-cover"
+                loading="lazy"
+              />
+            ) : null,
+          )}
+          {attachments.length > 3 ? (
+            <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/70 text-[11px] font-semibold text-ink">
+              +{attachments.length - 3}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
     </article>
   );
 }
