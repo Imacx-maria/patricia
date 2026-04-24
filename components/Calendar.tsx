@@ -20,6 +20,9 @@ import { addDaysToIso, daysBetweenIso, groupTasksByDate, isoDay, monthGrid } fro
 
 const WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+const MAX_WEEK_LANES = 7;
+const WEEK_BAR_TOP = 32;
+const WEEK_LANE_GAP = 9;
 const TEAM_COLORS = {
   obras: "#2563eb",
   patricia: "#a809b3",
@@ -170,14 +173,6 @@ export function Calendar({
     () => Array.from({ length: 6 }, (_, weekIndex) => grid.slice(weekIndex * 7, weekIndex * 7 + 7)),
     [grid],
   );
-  const taskLanes = useMemo(() => {
-    const sorted = [...visibleTasks].sort((a, b) => {
-      const startDiff = (taskStart(a) ?? "").localeCompare(taskStart(b) ?? "");
-      if (startDiff) return startDiff;
-      return a.title.localeCompare(b.title);
-    });
-    return new Map(sorted.map((task, index) => [task._id, index]));
-  }, [visibleTasks]);
   const todayIso = isoDay(new Date());
   const currentMonth = anchor.getMonth();
   const selectedTasks = selectedDay ? (grouped.get(selectedDay) ?? []) : [];
@@ -278,7 +273,7 @@ export function Calendar({
           {weeks.map((week, weekIndex) => {
             const weekStart = isoDay(week[0]);
             const weekEnd = isoDay(week[6]);
-            const segments = visibleTasks
+            const allSegments = visibleTasks
               .map((task) => {
                 const start = taskStart(task);
                 const end = taskEnd(task);
@@ -291,14 +286,22 @@ export function Calendar({
                   task,
                   columnStart,
                   columnEnd,
-                  lane: taskLanes.get(task._id) ?? 0,
                 };
               })
               .filter(Boolean)
-              .slice(0, 12);
+              .sort((a, b) => {
+                if (!a || !b) return 0;
+                const columnDiff = a.columnStart - b.columnStart;
+                if (columnDiff) return columnDiff;
+                const lengthDiff = (b.columnEnd - b.columnStart) - (a.columnEnd - a.columnStart);
+                if (lengthDiff) return lengthDiff;
+                return a.task.title.localeCompare(b.task.title);
+              });
+            const visibleSegments = allSegments.slice(0, MAX_WEEK_LANES);
+            const hiddenSegments = Math.max(0, allSegments.length - visibleSegments.length);
 
             return (
-              <div key={weekStart} className="relative grid min-h-28 grid-cols-7 gap-2">
+              <div key={weekStart} className="relative grid min-h-28 grid-cols-7 gap-2 overflow-hidden rounded-2xl">
                 {week.map((d, idx) => {
                   const iso = isoDay(d);
                   const dim = d.getMonth() !== currentMonth;
@@ -320,10 +323,13 @@ export function Calendar({
                   );
                 })}
 
-                <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7 gap-2">
-                  {segments.map((segment) => {
+                <div
+                  className="pointer-events-none absolute inset-x-0 grid grid-cols-7 gap-2"
+                  style={{ top: WEEK_BAR_TOP }}
+                >
+                  {visibleSegments.map((segment, lane) => {
                     if (!segment) return null;
-                    const top = (segment.lane % 9) * 9;
+                    const top = lane * WEEK_LANE_GAP;
                     return (
                       <DraggableCalendarBar
                         key={`${segment.task._id}-${weekIndex}`}
@@ -338,8 +344,17 @@ export function Calendar({
                       />
                     );
                   })}
-                  {visibleTasks.length > segments.length && weekIndex === 0 ? (
-                    <span className="sr-only">Há mais tarefas neste calendário.</span>
+                  {hiddenSegments > 0 ? (
+                    <button
+                      type="button"
+                      className="pointer-events-auto absolute bottom-1 right-2 rounded-full bg-white/80 px-1.5 text-[9px] font-bold text-ink-muted shadow-sm"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedDay(weekStart);
+                      }}
+                    >
+                      +{hiddenSegments}
+                    </button>
                   ) : null}
                 </div>
               </div>
