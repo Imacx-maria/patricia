@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { FilterBar } from "@/components/FilterBar";
+import { PersonSelectorChips } from "@/components/PersonSelectorChips";
 import { TaskCard } from "@/components/TaskCard";
 import { TaskModal } from "@/components/TaskModal";
 import { PRIORITY_CYCLE, PRIORITY_LABELS } from "@/lib/constants";
@@ -22,43 +23,6 @@ import { hydrateTasks } from "@/lib/taskLogic";
 import type { Area, Person, TaskPriority, TaskWithRelations } from "@/types/renovation";
 
 const FILTER_STORAGE_KEY = "patricia.plan.filters";
-
-function PersonChips({
-  people,
-  selectedPersonId,
-  onSelect,
-}: {
-  people: Person[];
-  selectedPersonId: string;
-  onSelect: (personId: string) => void;
-}) {
-  const visiblePeople = people
-    .filter((person) => person.active && person.name !== "Por atribuir")
-    .slice(0, 3);
-
-  return (
-    <div className="flex items-center gap-2">
-      {visiblePeople.map((person) => {
-        const selected = selectedPersonId === person._id;
-        return (
-          <button
-            key={person._id}
-            type="button"
-            aria-label={`Ver como ${person.name}`}
-            title={person.name}
-            className={`flex h-12 w-12 items-center justify-center rounded-full border-2 text-sm font-extrabold shadow-soft transition hover:-translate-y-0.5 ${
-              selected ? "border-ink ring-2 ring-ink/20" : "border-white"
-            }`}
-            style={{ backgroundColor: person.color, color: "#141417" }}
-            onClick={() => onSelect(person._id)}
-          >
-            {person.initials}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 function DroppablePriorityLane({
   areaId,
@@ -251,7 +215,7 @@ export default function PlanPage() {
         </div>
         <div className="grid gap-2">
           <span className="text-sm font-medium">Ver como</span>
-          <PersonChips people={people} selectedPersonId={me} onSelect={setMe} />
+          <PersonSelectorChips people={people} selectedPersonId={me} onSelect={setMe} />
         </div>
       </div>
 
