@@ -14,7 +14,7 @@ import { useMutation } from "convex/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import type { TaskWithRelations } from "@/types/renovation";
-import { groupTasksByDate, isoDay, monthGrid } from "@/lib/calendar";
+import { addDaysToIso, daysBetweenIso, groupTasksByDate, isoDay, monthGrid } from "@/lib/calendar";
 
 const WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -94,13 +94,21 @@ export function Calendar({
 
   async function handleDragEnd(event: DragEndEvent) {
     const taskId = event.active.id.toString();
-    const dueDate = event.over?.id?.toString();
+    const targetDate = event.over?.id?.toString();
     const task = tasks.find((candidate) => candidate._id === taskId);
-    if (!task || !dueDate || task.dueDate === dueDate) return;
+    if (!task || !targetDate) return;
+
+    const currentStart = task.startDate ?? task.dueDate;
+    if (currentStart === targetDate) return;
+
+    const duration = task.startDate && task.dueDate ? daysBetweenIso(task.startDate, task.dueDate) : 0;
+    const nextPatch = task.startDate
+      ? { startDate: targetDate, dueDate: addDaysToIso(targetDate, duration) }
+      : { dueDate: targetDate };
 
     try {
       setWarning("");
-      await updateTask({ id: task._id, dueDate });
+      await updateTask({ id: task._id, ...nextPatch });
     } catch (caught) {
       setWarning(caught instanceof Error ? caught.message : "Não foi possível mudar a data.");
     }
