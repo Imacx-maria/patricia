@@ -87,6 +87,7 @@ export default defineSchema({
     price: v.optional(v.union(v.number(), v.null())),
     sourceUrl: v.optional(v.string()),
     mimeType: v.optional(v.string()),
+    isMain: v.optional(v.boolean()),
     createdAt: v.number(),
   }).index("by_task", ["taskId"]),
 

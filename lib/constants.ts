@@ -1,17 +1,35 @@
 import type { CostCategory, TaskPriority, TaskStatus } from "@/types/renovation";
 
 export const STATUS_COLUMNS: { value: TaskStatus; label: string }[] = [
-  { value: "backlog", label: "Backlog" },
   { value: "todo", label: "Por fazer" },
   { value: "doing", label: "Em curso" },
-  { value: "blocked", label: "Bloqueado" },
-  { value: "waiting_material", label: "À espera de material" },
   { value: "done", label: "Feito" },
 ];
 
-export const STATUS_LABELS: Record<TaskStatus, string> = Object.fromEntries(
-  STATUS_COLUMNS.map((status) => [status.value, status.label]),
-) as Record<TaskStatus, string>;
+export const STATUS_LABELS: Record<TaskStatus, string> = {
+  backlog: "Backlog",
+  todo: "Por fazer",
+  doing: "Em curso",
+  blocked: "Bloqueado",
+  waiting_material: "À espera de material",
+  done: "Feito",
+};
+
+export const STATUS_CYCLE: TaskStatus[] = ["todo", "doing", "done"];
+
+export function nextStatus(current: TaskStatus): TaskStatus {
+  const index = STATUS_CYCLE.indexOf(current);
+  if (index === -1) return "todo";
+  return STATUS_CYCLE[(index + 1) % STATUS_CYCLE.length];
+}
+
+export const PRIORITY_CYCLE: TaskPriority[] = ["low", "medium", "high", "critical"];
+
+export function nextPriority(current: TaskPriority): TaskPriority {
+  const index = PRIORITY_CYCLE.indexOf(current);
+  if (index === -1) return "low";
+  return PRIORITY_CYCLE[(index + 1) % PRIORITY_CYCLE.length];
+}
 
 export const PRIORITY_LABELS: Record<TaskPriority, string> = {
   low: "Baixa",

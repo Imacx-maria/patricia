@@ -12,6 +12,27 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { deriveTaskState, hydrateTasks } from "@/lib/taskLogic";
 import type { TaskWithRelations } from "@/types/renovation";
 
+const defaultFilters: TaskFilters = {
+  area: "all",
+  personId: "all",
+  status: "all",
+  mine: false,
+  blocked: false,
+  waitingMaterial: false,
+};
+
+function readSavedFilters() {
+  if (typeof window === "undefined") return defaultFilters;
+
+  try {
+    const saved = window.localStorage.getItem("patricia.filters");
+    if (!saved) return defaultFilters;
+    return { ...defaultFilters, ...JSON.parse(saved) } as TaskFilters;
+  } catch {
+    return defaultFilters;
+  }
+}
+
 export default function MobilePage() {
   const tasks = useQuery(api.tasks.listTasks);
   const people = useQuery(api.people.listPeople);
@@ -21,18 +42,15 @@ export default function MobilePage() {
   const [me, setMe] = useState(() =>
     typeof window === "undefined" ? "" : (window.localStorage.getItem("patricia.me") ?? ""),
   );
-  const [filters, setFilters] = useState<TaskFilters>({
-    area: "all",
-    personId: "all",
-    status: "all",
-    mine: false,
-    blocked: false,
-    waitingMaterial: false,
-  });
+  const [filters, setFilters] = useState<TaskFilters>(readSavedFilters);
 
   useEffect(() => {
     if (me) window.localStorage.setItem("patricia.me", me);
   }, [me]);
+
+  useEffect(() => {
+    window.localStorage.setItem("patricia.filters", JSON.stringify(filters));
+  }, [filters]);
 
   const hydrated = useMemo(() => {
     if (!tasks || !people || !areas) return [];
@@ -46,7 +64,7 @@ export default function MobilePage() {
       if (filters.area !== "all" && task.area?.name !== filters.area) return false;
       if (filters.personId !== "all" && task.ownerId !== filters.personId && !task.allowedPersonIds.includes(filters.personId as Id<"people">)) return false;
       if (filters.status !== "all" && task.status !== filters.status) return false;
-      if (filters.mine && me && task.ownerId !== me && !task.allowedPersonIds.includes(me as Id<"people">)) return false;
+      if (filters.mine && (!me || (task.ownerId !== me && !task.allowedPersonIds.includes(me as Id<"people">)))) return false;
       if (filters.blocked && !derived.isBlocked) return false;
       if (filters.waitingMaterial && !task.materialNeeded && task.status !== "waiting_material") return false;
       return true;

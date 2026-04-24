@@ -141,100 +141,108 @@ export function TaskModal({
     }
   }
 
+  const fieldLabel = "grid gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted";
+  const fieldInput = "h-11 rounded-2xl border border-border bg-surface-raised px-3 text-sm font-normal normal-case tracking-normal text-ink placeholder:text-ink-muted focus:border-ink focus:outline-none";
+  const fieldTextarea = "min-h-24 rounded-2xl border border-border bg-surface-raised p-3 text-sm font-normal normal-case tracking-normal text-ink placeholder:text-ink-muted focus:border-ink focus:outline-none";
+  const checkRow = "flex items-center gap-2 rounded-2xl border border-border bg-surface-raised p-3 text-sm font-medium text-ink";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-slate-950/40 p-0 md:items-center md:justify-center md:p-6">
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-surface shadow-soft md:max-w-3xl md:rounded-3xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-4 py-3">
-          <h2 className="text-lg font-semibold">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
-          <button className="rounded-xl p-2 hover:bg-[#eee8de]" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end bg-ink/40 p-0 backdrop-blur-sm md:items-center md:justify-center md:p-6">
+      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-background shadow-soft md:max-w-3xl md:rounded-3xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-5 py-4">
+          <div className="flex flex-col gap-0.5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Tarefa</p>
+            <h2 className="text-xl font-extrabold tracking-tight text-ink">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
+          </div>
+          <button className="rounded-full p-2 text-ink hover:bg-background" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
-        <form className="grid gap-4 p-4" onSubmit={handleSubmit}>
-          {error ? <div className="rounded-xl bg-red-100 p-3 text-sm text-red-800">{error}</div> : null}
+        <form className="grid gap-4 p-5" onSubmit={handleSubmit}>
+          {error ? <div className="rounded-2xl bg-pastel-pink/50 p-3 text-sm font-medium text-ink">{error}</div> : null}
 
-          <label className="grid gap-1 text-sm font-medium">
+          <label className={fieldLabel}>
             Título
-            <input className="h-11 rounded-xl border border-border bg-surface px-3" value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+            <input className={fieldInput} value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
           </label>
 
-          <label className="grid gap-1 text-sm font-medium">
+          <label className={fieldLabel}>
             Descrição
-            <textarea className="min-h-24 rounded-xl border border-border bg-surface p-3" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+            <textarea className={fieldTextarea} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
           </label>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Área
-              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.areaId} onChange={(event) => setForm({ ...form, areaId: event.target.value })}>
+              <select className={fieldInput} value={form.areaId} onChange={(event) => setForm({ ...form, areaId: event.target.value })}>
                 {areas.map((area) => <option key={area._id} value={area._id}>{area.name}</option>)}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Estado
-              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as TaskStatus })}>
+              <select className={fieldInput} value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value as TaskStatus })}>
                 {STATUS_COLUMNS.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Prioridade
-              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value as TaskPriority })}>
+              <select className={fieldInput} value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value as TaskPriority })}>
                 {Object.entries(PRIORITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </label>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Responsável
-              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.ownerId} onChange={(event) => setForm({ ...form, ownerId: event.target.value })}>
+              <select className={fieldInput} value={form.ownerId} onChange={(event) => setForm({ ...form, ownerId: event.target.value })}>
                 {people.map((person) => <option key={person._id} value={person._id}>{person.name}</option>)}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Estimado
-              <input className="h-11 rounded-xl border border-border bg-surface px-3" inputMode="decimal" value={form.estimatedCost} onChange={(event) => setForm({ ...form, estimatedCost: event.target.value })} />
+              <input className={fieldInput} inputMode="decimal" value={form.estimatedCost} onChange={(event) => setForm({ ...form, estimatedCost: event.target.value })} />
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Real
-              <input className="h-11 rounded-xl border border-border bg-surface px-3" inputMode="decimal" value={form.actualCost} onChange={(event) => setForm({ ...form, actualCost: event.target.value })} />
+              <input className={fieldInput} inputMode="decimal" value={form.actualCost} onChange={(event) => setForm({ ...form, actualCost: event.target.value })} />
             </label>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Categoria
-              <select className="h-11 rounded-xl border border-border bg-surface px-3" value={form.costCategory} onChange={(event) => setForm({ ...form, costCategory: event.target.value as CostCategory })}>
+              <select className={fieldInput} value={form.costCategory} onChange={(event) => setForm({ ...form, costCategory: event.target.value as CostCategory })}>
                 {Object.entries(COST_CATEGORY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Início
-              <input className="h-11 rounded-xl border border-border bg-surface px-3" type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} />
+              <input className={fieldInput} type="date" value={form.startDate} onChange={(event) => setForm({ ...form, startDate: event.target.value })} />
             </label>
-            <label className="grid gap-1 text-sm font-medium">
+            <label className={fieldLabel}>
               Prazo
-              <input className="h-11 rounded-xl border border-border bg-surface px-3" type="date" value={form.dueDate} onChange={(event) => setForm({ ...form, dueDate: event.target.value })} />
+              <input className={fieldInput} type="date" value={form.dueDate} onChange={(event) => setForm({ ...form, dueDate: event.target.value })} />
             </label>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            <fieldset className="rounded-xl border border-border bg-surface p-3">
-              <legend className="px-1 text-sm font-semibold">Quem pode executar</legend>
+            <fieldset className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft">
+              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Quem pode executar</legend>
               <div className="mt-2 grid gap-2">
                 {people.map((person) => (
-                  <label key={person._id} className="flex items-center gap-2 text-sm">
+                  <label key={person._id} className="flex items-center gap-2 text-sm text-ink">
                     <input type="checkbox" checked={form.allowedPersonIds.includes(person._id)} onChange={(event) => updateArray("allowedPersonIds", person._id, event.target.checked)} />
                     {person.name}
                   </label>
                 ))}
               </div>
             </fieldset>
-            <fieldset className="rounded-xl border border-border bg-surface p-3">
-              <legend className="px-1 text-sm font-semibold">Dependências</legend>
+            <fieldset className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft">
+              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Dependências</legend>
               <div className="mt-2 max-h-48 overflow-y-auto">
                 {tasks.filter((candidate) => candidate._id !== task?._id).map((candidate) => (
-                  <label key={candidate._id} className="flex items-start gap-2 py-1 text-sm">
+                  <label key={candidate._id} className="flex items-start gap-2 py-1 text-sm text-ink">
                     <input className="mt-1" type="checkbox" checked={form.dependencyIds.includes(candidate._id)} onChange={(event) => updateArray("dependencyIds", candidate._id, event.target.checked)} />
                     <span>{candidate.title}</span>
                   </label>
@@ -244,33 +252,33 @@ export function TaskModal({
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
+            <label className={checkRow}>
               <input type="checkbox" checked={form.requiresOwnerDecision} onChange={(event) => setForm({ ...form, requiresOwnerDecision: event.target.checked })} />
               Precisa decisão da dona
             </label>
-            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
+            <label className={checkRow}>
               <input type="checkbox" checked={form.ownerDecisionDone} onChange={(event) => setForm({ ...form, ownerDecisionDone: event.target.checked })} />
               Decisão tomada
             </label>
-            <label className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-sm font-medium">
+            <label className={checkRow}>
               <input type="checkbox" checked={form.materialNeeded} onChange={(event) => setForm({ ...form, materialNeeded: event.target.checked })} />
               Precisa material
             </label>
           </div>
 
-          <label className="grid gap-1 text-sm font-medium">
+          <label className={fieldLabel}>
             Notas de material
-            <input className="h-11 rounded-xl border border-border bg-surface px-3" value={form.materialNotes} onChange={(event) => setForm({ ...form, materialNotes: event.target.value })} />
+            <input className={fieldInput} value={form.materialNotes} onChange={(event) => setForm({ ...form, materialNotes: event.target.value })} />
           </label>
-          <label className="grid gap-1 text-sm font-medium">
+          <label className={fieldLabel}>
             Notas
-            <textarea className="min-h-24 rounded-xl border border-border bg-surface p-3" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
+            <textarea className={fieldTextarea} value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
           </label>
 
           {task ? (
             <AttachmentsSection taskId={task._id} />
           ) : (
-            <p className="rounded-xl bg-surface-raised p-3 text-xs text-ink-muted">
+            <p className="rounded-2xl bg-surface-raised p-3 text-xs text-ink-muted">
               Guarda a tarefa para poderes adicionar fotos.
             </p>
           )}

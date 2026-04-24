@@ -29,7 +29,7 @@ export default function KanbanPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Planeamento desktop</p>
         <h1 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">Kanban da renovação</h1>
       </div>
-      <KanbanBoard tasks={hydrated} people={people} onOpenTask={setSelectedTask} />
+      <KanbanBoard tasks={hydrated} people={people} areas={areas} onOpenTask={setSelectedTask} />
       {selectedTask ? (
         <TaskModal
           key={selectedTask._id}

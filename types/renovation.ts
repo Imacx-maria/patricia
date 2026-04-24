@@ -60,6 +60,7 @@ export type Attachment = {
   price?: number | null;
   sourceUrl?: string;
   mimeType?: string;
+  isMain?: boolean;
   createdAt: number;
   url: string | null;
 };
