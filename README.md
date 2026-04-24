@@ -50,7 +50,7 @@ Depois do Convex estar sincronizado:
 npx convex run seed:seedInitialData
 ```
 
-O seed cria pessoas, áreas, tarefas e dependências iniciais. Para resetar tarefas em desenvolvimento:
+O seed cria/garante apenas pessoas e áreas. Para limpar tarefas, anexos e atividade e deixar a app pronta para dados novos:
 
 ```bash
 npx convex run seed:seedInitialData '{"resetTasks": true}'
