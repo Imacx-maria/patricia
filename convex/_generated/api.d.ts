@@ -11,6 +11,7 @@
 import type * as areas from "../areas.js";
 import type * as attachments from "../attachments.js";
 import type * as people from "../people.js";
+import type * as renovationPlan from "../renovationPlan.js";
 import type * as seed from "../seed.js";
 import type * as tasks from "../tasks.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   areas: typeof areas;
   attachments: typeof attachments;
   people: typeof people;
+  renovationPlan: typeof renovationPlan;
   seed: typeof seed;
   tasks: typeof tasks;
 }>;
