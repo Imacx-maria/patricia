@@ -127,23 +127,36 @@ function DraggableCalendarBar({
   });
 
   return (
-    <button
-      ref={setNodeRef}
-      type="button"
+    <span
+      className="group relative"
       style={{
-        ...style,
-        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+        gridColumn: style?.gridColumn,
+        marginTop: style?.marginTop,
       }}
-      className={`${className} ${isDragging ? "z-20 opacity-70" : ""}`}
-      onClick={(event) => {
-        event.stopPropagation();
-        onOpenTask(task);
-      }}
-      title={task.title}
-      aria-label={task.title}
-      {...attributes}
-      {...listeners}
-    />
+    >
+      <button
+        ref={setNodeRef}
+        type="button"
+        style={{
+          ...style,
+          gridColumn: undefined,
+          marginTop: undefined,
+          transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+        }}
+        className={`${className} ${isDragging ? "z-20 opacity-70" : ""}`}
+        onClick={(event) => {
+          event.stopPropagation();
+          onOpenTask(task);
+        }}
+        title={task.title}
+        aria-label={task.title}
+        {...attributes}
+        {...listeners}
+      />
+      <span className="pointer-events-none absolute bottom-3 left-1/2 z-30 hidden max-w-56 -translate-x-1/2 whitespace-normal rounded-lg bg-ink px-2 py-1 text-[10px] font-semibold leading-tight text-white shadow-soft group-hover:block group-focus-within:block">
+        {task.title}
+      </span>
+    </span>
   );
 }
 
