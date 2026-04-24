@@ -42,12 +42,18 @@ export function addDaysToIso(iso: string, days: number): string {
 export function groupTasksByDate(tasks: TaskWithRelations[]): Map<string, TaskWithRelations[]> {
   const map = new Map<string, TaskWithRelations[]>();
   for (const t of tasks) {
-    const key = t.startDate ?? t.dueDate;
-    if (!key) continue;
-    const iso = key.slice(0, 10);
-    const arr = map.get(iso) ?? [];
-    arr.push(t);
-    map.set(iso, arr);
+    const start = (t.startDate ?? t.dueDate)?.slice(0, 10);
+    if (!start) continue;
+
+    const end = (t.dueDate ?? t.startDate)?.slice(0, 10) ?? start;
+    const duration = daysBetweenIso(start, end);
+
+    for (let day = 0; day <= duration; day += 1) {
+      const iso = addDaysToIso(start, day);
+      const arr = map.get(iso) ?? [];
+      arr.push(t);
+      map.set(iso, arr);
+    }
   }
   return map;
 }
