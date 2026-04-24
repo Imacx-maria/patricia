@@ -6,7 +6,8 @@ import { useMemo, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { AttachmentsSection } from "./AttachmentsSection";
-import { COST_CATEGORY_LABELS, PRIORITY_LABELS, STATUS_COLUMNS } from "@/lib/constants";
+import { COST_CATEGORY_LABELS, PRIORITY_LABELS, STATUS_COLUMNS, STATUS_LABELS } from "@/lib/constants";
+import { PersonIconStack } from "./PersonIconStack";
 import type {
   Area,
   CostCategory,
@@ -62,6 +63,12 @@ export function TaskModal({
   const [error, setError] = useState("");
   const unassignedPerson = people.find((person) => person.name === "Por atribuir");
   const defaultPerson = unassignedPerson ?? people.find((person) => person.active) ?? people[0];
+  const defaultAllowedPersonIds = people
+    .filter((person) => person.active && person.name !== "Por atribuir")
+    .map((person) => person._id);
+  const existingTasks = tasks
+    .filter((candidate) => candidate._id !== task?._id)
+    .sort((a, b) => `${a.area?.name ?? ""}${a.title}`.localeCompare(`${b.area?.name ?? ""}${b.title}`, "pt-PT"));
 
   const initialState = useMemo<FormState>(
     () => ({
@@ -71,7 +78,7 @@ export function TaskModal({
       status: task?.status ?? "todo",
       priority: task?.priority ?? "medium",
       ownerId: task?.ownerId ?? defaultPerson?._id ?? "",
-      allowedPersonIds: task?.allowedPersonIds ?? [],
+      allowedPersonIds: task?.allowedPersonIds ?? defaultAllowedPersonIds,
       requiresOwnerDecision: task?.requiresOwnerDecision ?? false,
       ownerDecisionDone: task?.ownerDecisionDone ?? false,
       dependencyIds: task?.dependencyIds ?? [],
@@ -84,7 +91,7 @@ export function TaskModal({
       materialNeeded: task?.materialNeeded ?? false,
       materialNotes: task?.materialNotes ?? "",
     }),
-    [areas, defaultPerson, task],
+    [areas, defaultAllowedPersonIds, defaultPerson, task],
   );
 
   const [form, setForm] = useState<FormState>(initialState);
@@ -228,25 +235,34 @@ export function TaskModal({
 
           <div className="grid gap-3 md:grid-cols-2">
             <fieldset className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft">
-              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Quem pode executar</legend>
+              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Pessoas</legend>
               <div className="mt-2 grid gap-2">
                 {people.map((person) => (
-                  <label key={person._id} className="flex items-center gap-2 text-sm text-ink">
+                  <label key={person._id} className="flex items-center gap-2 rounded-xl bg-white/60 p-2 text-sm text-ink">
                     <input type="checkbox" checked={form.allowedPersonIds.includes(person._id)} onChange={(event) => updateArray("allowedPersonIds", person._id, event.target.checked)} />
-                    {person.name}
+                    <PersonIconStack people={[person]} />
+                    <span>{person.name}</span>
                   </label>
                 ))}
               </div>
             </fieldset>
             <fieldset className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft">
-              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Dependências</legend>
-              <div className="mt-2 max-h-48 overflow-y-auto">
-                {tasks.filter((candidate) => candidate._id !== task?._id).map((candidate) => (
-                  <label key={candidate._id} className="flex items-start gap-2 py-1 text-sm text-ink">
+              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Dependências: tarefas existentes</legend>
+              <div className="mt-2 max-h-56 overflow-y-auto">
+                {existingTasks.map((candidate) => (
+                  <label key={candidate._id} className="flex items-start gap-2 rounded-xl bg-white/60 p-2 text-sm text-ink">
                     <input className="mt-1" type="checkbox" checked={form.dependencyIds.includes(candidate._id)} onChange={(event) => updateArray("dependencyIds", candidate._id, event.target.checked)} />
-                    <span>{candidate.title}</span>
+                    <span className="grid gap-0.5">
+                      <span className="font-semibold">{candidate.title}</span>
+                      <span className="text-xs text-ink-muted">{candidate.area?.name ?? "Sem área"} · {STATUS_LABELS[candidate.status]}</span>
+                    </span>
                   </label>
                 ))}
+                {existingTasks.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-border p-3 text-xs text-ink-muted">
+                    Ainda não há outras tarefas para usar como dependência.
+                  </p>
+                ) : null}
               </div>
             </fieldset>
           </div>

@@ -57,6 +57,7 @@ export function taskMatchesFilters({
       task.notes,
       task.area?.name,
       task.owner?.name,
+      ...task.allowedPeople.map((person) => person.name),
     ]
       .filter(Boolean)
       .join(" ")
@@ -74,6 +75,13 @@ export function taskMatchesFilters({
     return false;
   }
   if (filters.status !== "all" && task.status !== filters.status) return false;
+  if (
+    currentPersonId &&
+    task.ownerId !== currentPersonId &&
+    !task.allowedPersonIds.includes(currentPersonId as Id<"people">)
+  ) {
+    return false;
+  }
   if (
     filters.mine &&
     (!currentPersonId ||

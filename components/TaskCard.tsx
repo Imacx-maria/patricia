@@ -15,6 +15,7 @@ import {
 import { deriveTaskState } from "@/lib/taskLogic";
 import type { Person, TaskPriority, TaskStatus, TaskWithRelations } from "@/types/renovation";
 import { BlockedReasons } from "./BlockedReasons";
+import { PersonIconStack } from "./PersonIconStack";
 import { surfaceForCategory } from "@/lib/theme";
 
 const statusBadgeClass: Record<TaskStatus, string> = {
@@ -94,8 +95,12 @@ export function TaskCard({
   const attachments = useQuery(api.attachments.listByTask, { taskId: task._id });
   const derived = deriveTaskState(task, allTasks, people);
 
-  const activePeople = people.filter((p) => p.active);
-  const unassigned = people.find((p) => p.name === "Por atribuir");
+  const assignedPeople = [task.owner, ...task.allowedPeople].reduce<Person[]>((uniquePeople, person) => {
+    if (person && !uniquePeople.some((candidate) => candidate._id === person._id)) {
+      uniquePeople.push(person);
+    }
+    return uniquePeople;
+  }, []);
 
   const cardHold = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardHeld = useRef(false);
@@ -115,20 +120,6 @@ export function TaskCard({
     },
     onHold: () => {
       void updateTask({ id: task._id, priority: "low" });
-    },
-  });
-
-  const ownerHandlers = useTapHold({
-    onTap: () => {
-      if (activePeople.length === 0) return;
-      const idx = activePeople.findIndex((p) => p._id === task.ownerId);
-      const nextOwner = activePeople[(idx + 1) % activePeople.length];
-      void updateTask({ id: task._id, ownerId: nextOwner._id });
-    },
-    onHold: () => {
-      if (unassigned) {
-        void updateTask({ id: task._id, ownerId: unassigned._id });
-      }
     },
   });
 
@@ -221,23 +212,12 @@ export function TaskCard({
         ) : null}
       </div>
 
-      {!compact ? (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            data-badge
-            {...ownerHandlers}
-            className="inline-flex h-7 items-center gap-2 rounded-full bg-white/70 pl-1 pr-2.5 text-[11px] font-semibold text-ink"
-            title="Tocar: próxima pessoa · Manter: Por atribuir"
-          >
-            <span
-              className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
-              style={{ backgroundColor: task.owner?.color ?? "#d6c7f2", color: "#141417" }}
-            >
-              {task.owner?.initials ?? "?"}
-            </span>
-            {task.owner?.name ?? "Por atribuir"}
-          </button>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="rounded-full bg-white/70 px-1.5 py-1" data-card-skip>
+          <PersonIconStack people={assignedPeople} />
+        </div>
+        {!compact ? (
+          <>
           {task.dueDate ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[11px] text-ink">
               <CalendarDays size={12} />
@@ -248,8 +228,9 @@ export function TaskCard({
             <Euro size={12} />
             Estimado: {currencyFormatter.format(task.estimatedCost ?? 0)}
           </span>
-        </div>
-      ) : null}
+          </>
+        ) : null}
+      </div>
 
       {!compact && derived.isBlocked ? (
         <BlockedReasons reasons={derived.blockedReasons} tasks={allTasks} />

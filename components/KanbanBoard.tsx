@@ -11,6 +11,7 @@ import {
 import { useMutation } from "convex/react";
 import { useMemo, useState } from "react";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { STATUS_COLUMNS } from "@/lib/constants";
 import type { Area, Person, TaskStatus, TaskWithRelations } from "@/types/renovation";
 import { KanbanColumn } from "./KanbanColumn";
@@ -72,7 +73,13 @@ export function KanbanBoard({
     () =>
       tasks.filter((task) => {
         if (areaFilter !== "all" && task.areaId !== areaFilter) return false;
-        if (ownerFilter !== "all" && task.ownerId !== ownerFilter) return false;
+        if (
+          ownerFilter !== "all" &&
+          task.ownerId !== ownerFilter &&
+          !task.allowedPersonIds.includes(ownerFilter as Id<"people">)
+        ) {
+          return false;
+        }
         return true;
       }),
     [tasks, areaFilter, ownerFilter],
@@ -146,7 +153,7 @@ export function KanbanBoard({
         </div>
       ) : null}
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="grid gap-4 pb-4 lg:grid-cols-3">
           {STATUS_COLUMNS.map((column) => {
             const columnTasks = filtered.filter((task) => task.status === column.value);
             return (

@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-ink md:grid md:grid-cols-[240px_1fr] md:gap-6 md:p-4">
       <aside className="hidden md:flex md:flex-col md:gap-6 md:rounded-3xl md:bg-sidebar md:p-5 md:text-sidebar-ink md:shadow-soft">
-        <Link href="/mobile" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink">
             <span className="text-lg font-black">p</span>
             <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-dot-accent" />
@@ -74,7 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex flex-col">
         <header className="sticky top-0 z-30 -mx-4 border-b border-border bg-background/90 px-4 py-3 backdrop-blur md:hidden">
-          <Link href="/mobile" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-sidebar text-sidebar-ink">
               <span className="text-base font-black">p</span>
               <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-dot-accent" />
