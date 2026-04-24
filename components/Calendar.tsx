@@ -24,7 +24,7 @@ const TEAM_COLORS = {
   obras: "#2563eb",
   patricia: "#a809b3",
   sandra: "#86efac",
-  patriciaSandra: "linear-gradient(90deg, #a809b3 0 50%, #86efac 50% 100%)",
+  patriciaSandra: "linear-gradient(90deg, #a809b3 0%, #c84ed2 45%, #86efac 100%)",
   mixed: "#0f766e",
   fallback: "#64748b",
 };
@@ -60,6 +60,22 @@ function taskColorClass(task: TaskWithRelations) {
   return "border-teal-600 bg-teal-50";
 }
 
+function taskStart(task: TaskWithRelations) {
+  return (task.startDate ?? task.dueDate)?.slice(0, 10) ?? null;
+}
+
+function taskEnd(task: TaskWithRelations) {
+  return (task.dueDate ?? task.startDate)?.slice(0, 10) ?? null;
+}
+
+function maxIso(a: string, b: string) {
+  return a > b ? a : b;
+}
+
+function minIso(a: string, b: string) {
+  return a < b ? a : b;
+}
+
 function DroppableDay({
   iso,
   className,
@@ -92,7 +108,7 @@ function DroppableDay({
   );
 }
 
-function DraggableCalendarTask({
+function DraggableCalendarBar({
   task,
   className,
   style,
@@ -150,6 +166,18 @@ export function Calendar({
     [tasks],
   );
   const grouped = useMemo(() => groupTasksByDate(visibleTasks), [visibleTasks]);
+  const weeks = useMemo(
+    () => Array.from({ length: 6 }, (_, weekIndex) => grid.slice(weekIndex * 7, weekIndex * 7 + 7)),
+    [grid],
+  );
+  const taskLanes = useMemo(() => {
+    const sorted = [...visibleTasks].sort((a, b) => {
+      const startDiff = (taskStart(a) ?? "").localeCompare(taskStart(b) ?? "");
+      if (startDiff) return startDiff;
+      return a.title.localeCompare(b.title);
+    });
+    return new Map(sorted.map((task, index) => [task._id, index]));
+  }, [visibleTasks]);
   const todayIso = isoDay(new Date());
   const currentMonth = anchor.getMonth();
   const selectedTasks = selectedDay ? (grouped.get(selectedDay) ?? []) : [];
@@ -246,44 +274,75 @@ export function Calendar({
       </div>
 
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="mt-1 grid grid-cols-7 gap-2">
-          {grid.map((d, idx) => {
-            const iso = isoDay(d);
-            const items = grouped.get(iso) ?? [];
-            const dim = d.getMonth() !== currentMonth;
-            const today = iso === todayIso;
-            const weekday = idx % 7;
-            const isWeekend = weekday >= 5;
-            const base = isWeekend ? "bg-pastel-pink/20" : "bg-surface-raised";
-            const dimmed = isWeekend ? "bg-pastel-pink/10 text-ink-muted" : "bg-surface-raised/40 text-ink-muted";
+        <div className="mt-1 grid gap-2">
+          {weeks.map((week, weekIndex) => {
+            const weekStart = isoDay(week[0]);
+            const weekEnd = isoDay(week[6]);
+            const segments = visibleTasks
+              .map((task) => {
+                const start = taskStart(task);
+                const end = taskEnd(task);
+                if (!start || !end || end < weekStart || start > weekEnd) return null;
+                const segmentStart = maxIso(start, weekStart);
+                const segmentEnd = minIso(end, weekEnd);
+                const columnStart = daysBetweenIso(weekStart, segmentStart) + 1;
+                const columnEnd = daysBetweenIso(weekStart, segmentEnd) + 2;
+                return {
+                  task,
+                  columnStart,
+                  columnEnd,
+                  lane: taskLanes.get(task._id) ?? 0,
+                };
+              })
+              .filter(Boolean)
+              .slice(0, 12);
+
             return (
-              <DroppableDay
-                key={iso}
-                iso={iso}
-                onOpenDay={() => setSelectedDay(iso)}
-                className={`min-h-24 cursor-pointer rounded-2xl p-2 transition hover:ring-2 hover:ring-ink/30 ${today ? "ring-2 ring-ink" : ""} ${dim ? dimmed : `${base} text-ink`}`}
-              >
-                <div className={`mb-1 text-xs font-semibold ${isWeekend && !dim ? "text-ink" : ""}`}>
-                  {d.getDate()}
-                </div>
-                <ul className="grid gap-0.5">
-                  {items.slice(0, 8).map((t) => {
+              <div key={weekStart} className="relative grid min-h-28 grid-cols-7 gap-2">
+                {week.map((d, idx) => {
+                  const iso = isoDay(d);
+                  const dim = d.getMonth() !== currentMonth;
+                  const today = iso === todayIso;
+                  const isWeekend = idx >= 5;
+                  const base = isWeekend ? "bg-pastel-pink/20" : "bg-surface-raised";
+                  const dimmed = isWeekend ? "bg-pastel-pink/10 text-ink-muted" : "bg-surface-raised/40 text-ink-muted";
+                  return (
+                    <DroppableDay
+                      key={iso}
+                      iso={iso}
+                      onOpenDay={() => setSelectedDay(iso)}
+                      className={`min-h-28 cursor-pointer rounded-2xl p-2 transition hover:ring-2 hover:ring-ink/30 ${today ? "ring-2 ring-ink" : ""} ${dim ? dimmed : `${base} text-ink`}`}
+                    >
+                      <div className={`text-xs font-semibold ${isWeekend && !dim ? "text-ink" : ""}`}>
+                        {d.getDate()}
+                      </div>
+                    </DroppableDay>
+                  );
+                })}
+
+                <div className="pointer-events-none absolute inset-x-0 top-8 grid grid-cols-7 gap-2">
+                  {segments.map((segment) => {
+                    if (!segment) return null;
+                    const top = (segment.lane % 9) * 9;
                     return (
-                      <li key={t._id}>
-                        <DraggableCalendarTask
-                          task={t}
-                          onOpenTask={onOpenTask}
-                          className="h-1.5 w-full rounded-full hover:h-2.5 hover:brightness-95 focus-visible:h-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
-                          style={taskLineStyle(t)}
-                        />
-                      </li>
+                      <DraggableCalendarBar
+                        key={`${segment.task._id}-${weekIndex}`}
+                        task={segment.task}
+                        onOpenTask={onOpenTask}
+                        className="pointer-events-auto h-1.5 rounded-full hover:h-2.5 hover:brightness-95 focus-visible:h-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                        style={{
+                          ...taskLineStyle(segment.task),
+                          gridColumn: `${segment.columnStart} / ${segment.columnEnd}`,
+                          marginTop: top,
+                        }}
+                      />
                     );
                   })}
-                  {items.length > 8 ? (
-                    <li className="pt-0.5 text-[9px] leading-none text-ink-muted">+{items.length - 8}</li>
+                  {visibleTasks.length > segments.length && weekIndex === 0 ? (
+                    <span className="sr-only">Há mais tarefas neste calendário.</span>
                   ) : null}
-                </ul>
-              </DroppableDay>
+                </div>
+              </div>
             );
           })}
         </div>
