@@ -26,7 +26,7 @@ export function KanbanColumn({
   return (
     <section
       ref={setNodeRef}
-      className="flex w-72 shrink-0 flex-col gap-3 rounded-3xl bg-surface p-4 shadow-soft"
+      className={`flex w-72 shrink-0 flex-col gap-3 rounded-3xl bg-surface p-4 shadow-soft ${isOver ? "ring-2 ring-ink" : ""}`}
     >
       <header className="flex items-center justify-between">
         <span className="inline-flex h-7 items-center rounded-full bg-ink px-3 text-xs font-semibold text-white">

@@ -1,28 +1,22 @@
 "use client";
 
 import { AREA_NAMES, STATUS_COLUMNS } from "@/lib/constants";
-import type { Person, TaskStatus } from "@/types/renovation";
-
-export type TaskFilters = {
-  area: string;
-  personId: string;
-  status: TaskStatus | "all";
-  mine: boolean;
-  blocked: boolean;
-  waitingMaterial: boolean;
-};
+import type { TaskFilters } from "@/lib/taskFilters";
+import type { Person } from "@/types/renovation";
 
 export function FilterBar({
   filters,
   onChange,
   people,
+  showPersonFilter = true,
 }: {
   filters: TaskFilters;
   onChange: (filters: TaskFilters) => void;
-  people: Person[];
+  people?: Person[];
+  showPersonFilter?: boolean;
 }) {
   return (
-    <div className="grid gap-2 rounded-xl border border-border bg-surface p-3 md:grid-cols-5">
+    <div className={`grid gap-2 rounded-xl border border-border bg-surface p-3 ${showPersonFilter ? "md:grid-cols-5" : "md:grid-cols-4"}`}>
       <select
         className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.area}
@@ -33,16 +27,18 @@ export function FilterBar({
           <option key={area} value={area}>{area}</option>
         ))}
       </select>
-      <select
-        className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
-        value={filters.personId}
-        onChange={(event) => onChange({ ...filters, personId: event.target.value })}
-      >
-        <option value="all">Todas as pessoas</option>
-        {people.map((person) => (
-          <option key={person._id} value={person._id}>{person.name}</option>
-        ))}
-      </select>
+      {showPersonFilter ? (
+        <select
+          className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
+          value={filters.personId}
+          onChange={(event) => onChange({ ...filters, personId: event.target.value })}
+        >
+          <option value="all">Todas as pessoas</option>
+          {(people ?? []).map((person) => (
+            <option key={person._id} value={person._id}>{person.name}</option>
+          ))}
+        </select>
+      ) : null}
       <select
         className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.status}

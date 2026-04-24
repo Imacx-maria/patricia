@@ -2,35 +2,52 @@
 
 import { useQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { AreaSection } from "@/components/AreaSection";
-import { FilterBar, type TaskFilters } from "@/components/FilterBar";
-import { QuickAddTask } from "@/components/QuickAddTask";
+import { FilterBar } from "@/components/FilterBar";
 import { TaskModal } from "@/components/TaskModal";
-import type { Id } from "@/convex/_generated/dataModel";
-import { deriveTaskState, hydrateTasks } from "@/lib/taskLogic";
-import type { TaskWithRelations } from "@/types/renovation";
+import { filterTasks, readSavedTaskFilters } from "@/lib/taskFilters";
+import { hydrateTasks } from "@/lib/taskLogic";
+import type { Person, TaskWithRelations } from "@/types/renovation";
 
-const defaultFilters: TaskFilters = {
-  area: "all",
-  personId: "all",
-  status: "all",
-  mine: false,
-  blocked: false,
-  waitingMaterial: false,
-};
+const FILTER_STORAGE_KEY = "patricia.filters";
 
-function readSavedFilters() {
-  if (typeof window === "undefined") return defaultFilters;
+function PersonChips({
+  people,
+  selectedPersonId,
+  onSelect,
+}: {
+  people: Person[];
+  selectedPersonId: string;
+  onSelect: (personId: string) => void;
+}) {
+  const visiblePeople = people
+    .filter((person) => person.active && person.name !== "Por atribuir")
+    .slice(0, 3);
 
-  try {
-    const saved = window.localStorage.getItem("patricia.filters");
-    if (!saved) return defaultFilters;
-    return { ...defaultFilters, ...JSON.parse(saved) } as TaskFilters;
-  } catch {
-    return defaultFilters;
-  }
+  return (
+    <div className="flex items-center gap-2">
+      {visiblePeople.map((person) => {
+        const selected = selectedPersonId === person._id;
+        return (
+          <button
+            key={person._id}
+            type="button"
+            aria-label={`Ver como ${person.name}`}
+            title={person.name}
+            className={`flex h-12 w-12 items-center justify-center rounded-full border-2 text-sm font-extrabold shadow-soft transition hover:-translate-y-0.5 ${
+              selected ? "border-ink ring-2 ring-ink/20" : "border-white"
+            }`}
+            style={{ backgroundColor: person.color, color: "#141417" }}
+            onClick={() => onSelect(person._id)}
+          >
+            {person.initials}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function MobilePage() {
@@ -42,14 +59,14 @@ export default function MobilePage() {
   const [me, setMe] = useState(() =>
     typeof window === "undefined" ? "" : (window.localStorage.getItem("patricia.me") ?? ""),
   );
-  const [filters, setFilters] = useState<TaskFilters>(readSavedFilters);
+  const [filters, setFilters] = useState(() => readSavedTaskFilters(FILTER_STORAGE_KEY));
 
   useEffect(() => {
     if (me) window.localStorage.setItem("patricia.me", me);
   }, [me]);
 
   useEffect(() => {
-    window.localStorage.setItem("patricia.filters", JSON.stringify(filters));
+    window.localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
   }, [filters]);
 
   const hydrated = useMemo(() => {
@@ -59,16 +76,7 @@ export default function MobilePage() {
 
   const filtered = useMemo(() => {
     if (!people) return [];
-    return hydrated.filter((task) => {
-      const derived = deriveTaskState(task, hydrated, people);
-      if (filters.area !== "all" && task.area?.name !== filters.area) return false;
-      if (filters.personId !== "all" && task.ownerId !== filters.personId && !task.allowedPersonIds.includes(filters.personId as Id<"people">)) return false;
-      if (filters.status !== "all" && task.status !== filters.status) return false;
-      if (filters.mine && (!me || (task.ownerId !== me && !task.allowedPersonIds.includes(me as Id<"people">)))) return false;
-      if (filters.blocked && !derived.isBlocked) return false;
-      if (filters.waitingMaterial && !task.materialNeeded && task.status !== "waiting_material") return false;
-      return true;
-    });
+    return filterTasks({ tasks: hydrated, filters, people, currentPersonId: me });
   }, [filters, hydrated, me, people]);
 
   if (!tasks || !people || !areas) {
@@ -82,31 +90,33 @@ export default function MobilePage() {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Checklist mobile</p>
           <h1 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">Tarefas por área</h1>
         </div>
-        <div className="grid gap-2 md:w-72">
-          <label className="text-sm font-medium">Ver como</label>
-          <select
-            className="h-11 rounded-md border border-[#ded6c9] bg-white px-3"
-            value={me}
-            onChange={(event) => setMe(event.target.value)}
-          >
-            <option value="">Escolher pessoa</option>
-            {people.map((person) => (
-              <option key={person._id} value={person._id}>{person.name}</option>
-            ))}
-          </select>
+        <div className="grid gap-2">
+          <span className="text-sm font-medium">Ver como</span>
+          <PersonChips people={people} selectedPersonId={me} onSelect={setMe} />
         </div>
       </div>
 
-      <QuickAddTask areas={areas} people={people} currentPersonId={me} />
-      <FilterBar filters={filters} onChange={setFilters} people={people} />
+      <div className="flex items-center gap-2">
+        <label className="relative flex-1">
+          <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted" size={18} />
+          <input
+            className="h-14 w-full rounded-full border border-border bg-surface pl-11 pr-4 text-sm shadow-soft"
+            placeholder="Pesquisar tarefa..."
+            value={filters.search}
+            onChange={(event) => setFilters({ ...filters, search: event.target.value })}
+          />
+        </label>
+        <button
+          type="button"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ink text-white shadow-soft hover:opacity-90"
+          aria-label="Adicionar tarefa"
+          onClick={() => setCreating(true)}
+        >
+          <Plus size={22} />
+        </button>
+      </div>
 
-      <button
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-teal-500 bg-teal-50 px-4 py-3 font-semibold text-teal-800 md:hidden"
-        onClick={() => setCreating(true)}
-      >
-        <Plus size={18} />
-        Nova tarefa completa
-      </button>
+      <FilterBar filters={filters} onChange={setFilters} showPersonFilter={false} />
 
       <div className="grid gap-6">
         {areas.map((area) => (
