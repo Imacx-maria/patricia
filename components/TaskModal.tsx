@@ -154,9 +154,9 @@ export function TaskModal({
   const checkRow = "flex items-center gap-2 rounded-2xl border border-border bg-surface-raised p-3 text-sm font-medium text-ink";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-ink/40 p-0 backdrop-blur-sm md:items-center md:justify-center md:p-6">
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-background shadow-soft md:max-w-3xl md:rounded-3xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-5 py-4">
+    <div className="fixed inset-0 z-50 flex items-end bg-ink/40 px-3 pb-3 pt-10 backdrop-blur-sm md:items-center md:justify-center md:p-6">
+      <div className="max-h-[88vh] w-full overflow-y-auto rounded-3xl bg-background shadow-soft md:max-h-[92vh] md:max-w-3xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-5 py-4 md:px-5">
           <div className="flex flex-col gap-0.5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Tarefa</p>
             <h2 className="text-xl font-extrabold tracking-tight text-ink">{task ? "Editar tarefa" : "Nova tarefa"}</h2>
@@ -165,7 +165,7 @@ export function TaskModal({
             <X size={20} />
           </button>
         </div>
-        <form className="grid gap-4 p-5" onSubmit={handleSubmit}>
+        <form className="grid gap-4 px-4 py-5 md:p-5" onSubmit={handleSubmit}>
           {error ? <div className="rounded-2xl bg-pastel-pink/50 p-3 text-sm font-medium text-ink">{error}</div> : null}
 
           <label className={fieldLabel}>
