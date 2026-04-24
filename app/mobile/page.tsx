@@ -80,7 +80,7 @@ export default function MobilePage() {
         </button>
       </div>
 
-      <FilterBar filters={filters} onChange={setFilters} showPersonFilter={false} />
+      <FilterBar filters={filters} onChange={setFilters} showPersonFilter={false} showMineFilter={false} />
 
       <div className="grid gap-6">
         {areas.map((area) => (

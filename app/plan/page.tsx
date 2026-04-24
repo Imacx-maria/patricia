@@ -239,7 +239,7 @@ export default function PlanPage() {
         </button>
       </div>
 
-      <FilterBar filters={filters} onChange={setFilters} showPersonFilter={false} />
+      <FilterBar filters={filters} onChange={setFilters} showPersonFilter={false} showMineFilter={false} />
 
       {warning ? (
         <div className="rounded-2xl bg-pastel-pink/50 p-3 text-sm font-medium text-ink">

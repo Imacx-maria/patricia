@@ -9,14 +9,23 @@ export function FilterBar({
   onChange,
   people,
   showPersonFilter = true,
+  showMineFilter = true,
 }: {
   filters: TaskFilters;
   onChange: (filters: TaskFilters) => void;
   people?: Person[];
   showPersonFilter?: boolean;
+  showMineFilter?: boolean;
 }) {
+  const columnClass =
+    showPersonFilter && showMineFilter
+      ? "md:grid-cols-5"
+      : showPersonFilter || showMineFilter
+        ? "md:grid-cols-4"
+        : "md:grid-cols-3";
+
   return (
-    <div className={`grid gap-2 rounded-xl border border-border bg-surface p-3 ${showPersonFilter ? "md:grid-cols-5" : "md:grid-cols-4"}`}>
+    <div className={`grid gap-2 rounded-xl border border-border bg-surface p-3 ${columnClass}`}>
       <select
         className="h-9 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition"
         value={filters.area}
@@ -49,14 +58,16 @@ export function FilterBar({
           <option key={status.value} value={status.value}>{status.label}</option>
         ))}
       </select>
-      <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
-        <input
-          type="checkbox"
-          checked={filters.mine}
-          onChange={(event) => onChange({ ...filters, mine: event.target.checked })}
-        />
-        Só minhas
-      </label>
+      {showMineFilter ? (
+        <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
+          <input
+            type="checkbox"
+            checked={filters.mine}
+            onChange={(event) => onChange({ ...filters, mine: event.target.checked })}
+          />
+          Só minhas
+        </label>
+      ) : null}
       <div className="grid grid-cols-2 gap-2">
         <label className="flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-xs font-semibold transition hover:bg-surface-raised">
           <input
