@@ -13,34 +13,34 @@ export function StatusDonut({
   data: { status: string; label: string; count: number }[];
 }) {
   const total = data.reduce((s, d) => s + d.count, 0) || 1;
-  let offset = 0;
   const radius = 60;
   const circ = 2 * Math.PI * radius;
+
+  const segments = data.reduce<{ status: string; dash: number; offset: number }[]>((acc, d) => {
+    const dash = (d.count / total) * circ;
+    const offset = acc.length === 0 ? 0 : acc[acc.length - 1].offset + acc[acc.length - 1].dash;
+    acc.push({ status: d.status, dash, offset });
+    return acc;
+  }, []);
 
   return (
     <div className="flex items-center gap-5 rounded-3xl bg-surface p-5 shadow-soft">
       <svg width="160" height="160" viewBox="0 0 160 160" className="shrink-0">
         <circle cx="80" cy="80" r={radius} fill="none" stroke="#f6f1e6" strokeWidth="22" />
-        {data.map((d) => {
-          const frac = d.count / total;
-          const dash = frac * circ;
-          const el = (
-            <circle
-              key={d.status}
-              cx="80"
-              cy="80"
-              r={radius}
-              fill="none"
-              stroke={COLORS[d.status] ?? "#141417"}
-              strokeWidth="22"
-              strokeDasharray={`${dash} ${circ - dash}`}
-              strokeDashoffset={-offset}
-              transform="rotate(-90 80 80)"
-            />
-          );
-          offset += dash;
-          return el;
-        })}
+        {segments.map((seg) => (
+          <circle
+            key={seg.status}
+            cx="80"
+            cy="80"
+            r={radius}
+            fill="none"
+            stroke={COLORS[seg.status] ?? "#141417"}
+            strokeWidth="22"
+            strokeDasharray={`${seg.dash} ${circ - seg.dash}`}
+            strokeDashoffset={-seg.offset}
+            transform="rotate(-90 80 80)"
+          />
+        ))}
         <text x="80" y="86" textAnchor="middle" className="fill-ink font-extrabold" fontSize="26">
           {total}
         </text>
